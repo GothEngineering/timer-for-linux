@@ -9,19 +9,38 @@ root.config(bg="gray20") # Find a more pretty colour please, this gray looks a l
 # Remember you have to change the background of each label and button to the same colour so it doesn't clash with the real bg
 
 class Timer:
-    counting_down = False
-    text_input = tkinter.StringVar()
-    
+    #counting_down = False
+    #text_input = tkinter.StringVar()
+      
+
+
     def __init__(self):
-        self.label_test = customtkinter.CTkLabel(root, text=f"Timer", text_color="white", fg_color="black")
-        self.label_test.pack(fill="both")
+        self.counting_down = False
+        self.hours_placeholder = "00"
+        self.minutes_placeholder = "00"
+        self.seconds_placeholder = "00"  
         
-        self.button_test = customtkinter.CTkButton(root, text="Start", text_color="white", fg_color="black", command=self.countdown_start)
+        #self.label_test = customtkinter.CTkLabel(root, text=f"Insert time below", text_color="white", fg_color="black")
+        #self.label_test.pack(fill="both")
+        
+        self.button_test = customtkinter.CTkButton(root, text="Start", text_color="white", fg_color="black", command=self.countdown_start, 
+        bg_color="gray20")
         self.button_test.pack(side="bottom")
 
+        # TO DO: Change .pack() into .grid() so the buttons are horizontal
+        self.hours_input = customtkinter.CTkEntry(root, font=("calibre", 15, "normal"), bg_color="gray20",
+        placeholder_text="Hours", placeholder_text_color="gray50", justify="center")
+        self.hours_input.pack()
         
-        self.timer_input = customtkinter.CTkEntry(root, textvariable = self.text_input, font=("calibre", 15, "normal"))
-        self.timer_input.pack()
+        self.minutes_input = customtkinter.CTkEntry(root, font=("calibre", 15, "normal"), bg_color="gray20",
+        placeholder_text="Minutes", placeholder_text_color="gray50", justify="center")
+        self.minutes_input.pack()
+        
+        self.seconds_input = customtkinter.CTkEntry(root, font=("calibre", 15, "normal"), bg_color="gray20",
+        placeholder_text="Seconds", placeholder_text_color="gray50", justify="center")
+        self.seconds_input.pack()
+        
+        
         
         self.timer_circle = customtkinter.CTkCanvas(root, height=400, width=300, bg="gray30")
         self.timer_circle.pack(expand=True, fill="both")
@@ -39,14 +58,36 @@ class Timer:
         self.counting_timer()
         
         # This part right here turns the input into the time I desire (for example 15 minutes)
-        # TO DO: make it show a template of 00:00:00, read more about the tkinter entries later
-        # It should use that string and turn it into the timer "time" like a pomodoro thingie
-        user_time = self.timer_input.get()
-        print(f"Timer time test: {user_time}")
-        self.timer_input.set("")
+        hours_entry = self.hours_input.get()
+        minutes_entry = self.minutes_input.get()
+        seconds_entry = self.seconds_input.get()
+        
+        # Remember: Left variable = Right variable
+        # Right variable overwrites the left variable, right variable stays the same. Right assigns to Left
+        if hours_entry == "":
+            hours_entry = self.hours_placeholder
+        else:
+            hours_entry = hours_entry
+        
+        if minutes_entry == "":
+            minutes_entry = self.minutes_placeholder
+        else:
+            minutes_entry = minutes_entry
+        
+        if seconds_entry == "":
+            seconds_entry = self.seconds_placeholder
+        else:
+            seconds_entry = seconds_entry
+        
+        
+        self.hours_input.set("")
+        self.minutes_input.set("")
+        self.seconds_input.set("")
+        print(f"Timer time test: {hours_entry}:{minutes_entry}:{seconds_entry}")
+
 
     # Change the function to a constant loop that tracks the timer, it should ring when finished. The start button simply tracks the beginning
-    # It shouldn't also tell the final part
+    # it shouldn't also tell the final part
     def counting_timer(self):
         if self.counting_down == False:
             end_time = time.time()
