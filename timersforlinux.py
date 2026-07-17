@@ -19,6 +19,10 @@ class Timer:
         self.hours_placeholder = "00"
         self.minutes_placeholder = "00"
         self.seconds_placeholder = "00"  
+        self.hours_has_data = False
+        self.minutes_has_data = False
+        self.seconds_has_data = False
+        
         
         #self.label_test = customtkinter.CTkLabel(root, text=f"Insert time below", text_color="white", fg_color="black")
         #self.label_test.pack(fill="both")
@@ -55,42 +59,63 @@ class Timer:
         self.start_time = time.time()
         self.counting_down = not self.counting_down
         print(f"La variable al activar es: {self.counting_down}")
-        self.counting_timer()
+        
         
         # This part right here turns the input into the time I desire (for example 15 minutes)
-        hours_entry = self.hours_input.get()
-        minutes_entry = self.minutes_input.get()
-        seconds_entry = self.seconds_input.get()
+        self.hours_entry = self.hours_input.get()
+        self.minutes_entry = self.minutes_input.get()
+        self.seconds_entry = self.seconds_input.get()
         
         # Remember: Left variable = Right variable
         # Right variable overwrites the left variable, right variable stays the same. Right assigns to Left
-        if hours_entry == "":
-            hours_entry = self.hours_placeholder
+        if self.hours_entry == "":
+            self.hours_entry = self.hours_placeholder
+            self.hours_has_data = False
         else:
-            hours_entry = hours_entry
+            self.hours_entry = self.hours_entry
+            self.hours_has_data = True
         
-        if minutes_entry == "":
-            minutes_entry = self.minutes_placeholder
+        
+        if self.minutes_entry == "":
+            self.minutes_entry = self.minutes_placeholder
+            self.minutes_has_data = False
         else:
-            minutes_entry = minutes_entry
+            self.minutes_entry = self.minutes_entry
+            self.minutes_has_data = True
         
-        if seconds_entry == "":
-            seconds_entry = self.seconds_placeholder
+        
+        if self.seconds_entry == "":
+            self.seconds_entry = self.seconds_placeholder
+            self.seconds_has_data = False
         else:
-            seconds_entry = seconds_entry
-        
+            self.seconds_entry = self.seconds_entry
+            self.seconds_has_data = True
         
         self.hours_input.set("")
         self.minutes_input.set("")
         self.seconds_input.set("")
-        print(f"Timer time test: {hours_entry}:{minutes_entry}:{seconds_entry}")
-
+        print(f"Timer time test: {self.hours_entry}:{self.minutes_entry}:{self.seconds_entry}")
+        print(f"Horas {self.hours_has_data}  | Minutos {self.minutes_has_data}  | Segundos {self.seconds_has_data}")
+        self.counting_timer()
 
     # Change the function to a constant loop that tracks the timer, it should ring when finished. The start button simply tracks the beginning
     # it shouldn't also tell the final part
     def counting_timer(self):
-        if self.counting_down == False:
-            end_time = time.time()
+        if self.hours_has_data == False and self.minutes_has_data == False and self.seconds_has_data == False:
+            print("Error! please type something, dumbass")
+        
+        hours = self.hours_entry
+        minutes = self.minutes_entry
+        seconds = self.seconds_entry
+
+        total_seconds = (int(hours) * 3600) + (int(minutes) * 60) + int(seconds)
+            
+        print(f"tiempo total papu: {total_seconds}")
+        
+        
+        
+        #if self.counting_down == False:
+            #end_time = time.time()
             #final_time = end_time - self.start_time
             #print(f"Segundos pasados: {final_time}")
 
