@@ -19,43 +19,47 @@ class Timer:
         self.seconds_placeholder = "00"  
         self.current_seconds = 0
         
-        # TO DO: make this label change depending on the time inputted, god bless me
-        self.label_text = customtkinter.CTkLabel(root, text="00:00:00", text_color="white", bg_color="gray20")
-        self.label_text.grid(row=1, column=1, columnspan=3)
 
+        # That little timer on top of the timer
+        self.label_text = customtkinter.CTkLabel(root, text="00:00:00", text_color="white", bg_color="gray20")
+        self.label_text.grid(row=1, column=1, columnspan=3, sticky="nsew")
+
+        # The start button
         self.start_button = customtkinter.CTkButton(root, text="Start", text_color="white", fg_color="black", command=self.countdown_start, 
         bg_color="gray20")
-        self.start_button.grid(row=4, column=2)
+        self.start_button.grid(row=4, column=2, sticky="nsew")
         
+        # The pause button
         self.pause_button = customtkinter.CTkButton(root, text="Pause", text_color="white", fg_color="black", bg_color="gray20",
         command=self.pause_timer)
-        self.pause_button.grid(row=5, column=2)
+        self.pause_button.grid(row=5, column=2, sticky="nsew")
 
+
+        # Hours, minutes and seconds
         self.hours_input = customtkinter.CTkEntry(root, font=("calibre", 15, "normal"), bg_color="gray20",
         placeholder_text="Hours", placeholder_text_color="gray50", justify="center")
-        self.hours_input.grid(row=2, column=1)
-        
+        self.hours_input.grid(row=2, column=1, sticky="ew")
         
         self.minutes_input = customtkinter.CTkEntry(root, font=("calibre", 15, "normal"), bg_color="gray20",
         placeholder_text="Minutes", placeholder_text_color="gray50", justify="center")
-        self.minutes_input.grid(row=2, column=2)
-        
+        self.minutes_input.grid(row=2, column=2, sticky="nsew")
         
         self.seconds_input = customtkinter.CTkEntry(root, font=("calibre", 15, "normal"), bg_color="gray20",
         placeholder_text="Seconds", placeholder_text_color="gray50", justify="center")
-        self.seconds_input.grid(row=2, column=3)
+        self.seconds_input.grid(row=2, column=3, sticky="nsew")
         
         
+        # The canvas creation
         self.timer_circle = customtkinter.CTkCanvas(root, height=300, width=300, bg="gray30")
         
                                                       #X1, Y1, X2, Y2. That's the coordinates of each number
-        self.pie_chart = self.timer_circle.create_arc(50, 50, 250, 250, start=90, extent=359.9, width=10, outline="red", style="arc")
-        self.timer_circle.grid(row=3, column=1, columnspan=3)
+        self.pie_chart = self.timer_circle.create_arc(110, 50, 310, 250, start=90, extent=359.9, width=10, outline="red", style="arc")
+        self.timer_circle.grid(row=3, column=1, columnspan=3, sticky="nsew")
         # Remember, X1 and Y1 are the starting point of the rectangle, X2 and Y2 are the finish point. Because I wanted the arc to be centered
         # I substracted the first and the latter Y's by half the amount of the width and height (supposedly but it works now atleast)
     
-        #root.columnconfigure(1, weight=1)
-        #root.rowconfigure(1, weight=1)
+        root.columnconfigure(1, weight=1)
+        root.rowconfigure(1, weight=1)
     
     def countdown_start(self):
         self.start_time = time.time()
@@ -100,6 +104,8 @@ class Timer:
         self.total_seconds = (int(hours) * 3600) + (int(minutes) * 60) + int(seconds)
         self.current_seconds = self.total_seconds
 
+        
+
         self.counting_timer()
 
     
@@ -110,6 +116,16 @@ class Timer:
             degrees = (self.current_seconds / self.total_seconds) * 360
             self.timer_circle.itemconfig(self.pie_chart, extent=degrees)
             print(f"Ticking down... {self.current_seconds}")
+
+            self.timer_label = self.current_seconds
+            hours_in_the_float = round(self.timer_label) // 3600
+            seconds_without_hours = round(self.timer_label) % 3600
+            minutes = seconds_without_hours // 60
+
+            # Find a way to get the seconds, maybe just shoving the seconds variable in here
+            self.label_template = f"{hours_in_the_float:02d}:{minutes:02d}"
+            self.label_text.configure(text=self.label_template)
+            
             
 
             if self.current_seconds == 0:
