@@ -54,12 +54,12 @@ class Timer:
         # Remember, X1 and Y1 are the starting point of the rectangle, X2 and Y2 are the finish point. Because I wanted the arc to be centered
         # I substracted the first and the latter Y's by half the amount of the width and height (supposedly but it works now atleast)
     
-        #root.columnconfigure(0, weight=1)
-        #root.rowconfigure(0, weight=1)
+        #root.columnconfigure(1, weight=1)
+        #root.rowconfigure(1, weight=1)
     
     def countdown_start(self):
         self.start_time = time.time()
-        #self.counting_down = not self.counting_down
+        self.counting_down = True
         print(f"La variable al activar es: {self.counting_down}")
         
         
@@ -105,10 +105,6 @@ class Timer:
     
     def counting_timer(self):
         
-        # This "counting down" variable is causing issues, make sure to turn it to true whenever i press start
-        # or remove it alltogether LMAO
-        # it seems the issue is that pressing the start button changes it to true, but if something happens and it becomes
-        # false, it needs to be changed AGAIN with the pause button to start counting down again
         if self.current_seconds > 0 and self.counting_down == True:
             self.current_seconds -= 1
             degrees = (self.current_seconds / self.total_seconds) * 360
@@ -123,13 +119,16 @@ class Timer:
             root.after(1000, self.counting_timer)
 
     def pause_timer(self):
+
         if self.counting_down:
-            self.pause_button.configure(text="metelo papi metelo")
+            self.pause_button.configure(text="Unpause")
+
         else:
             self.pause_button.configure(text="Pause")
+
         self.counting_down = not self.counting_down
         print(self.counting_down)
-        
+        self.counting_timer()
         
         
         
