@@ -3,7 +3,7 @@ import tkinter
 import time
 
 root = customtkinter.CTk()
-root.title("Timer")
+root.title("Timer for Linux")
 # Reminder: X and Y
 root.geometry("420x415") # Im sorry for changing the resolution to fit the tkinter buttons :sob:
 root.config(bg="gray20") # Find a more pretty colour please, this gray looks a little too intense
@@ -22,7 +22,7 @@ class Timer:
         
 
         # That little timer on top of the timer
-        self.label_text = customtkinter.CTkLabel(root, text="00:00:00", text_color="white", bg_color="gray20", font=("calibre", 20, "normal"))
+        self.label_text = customtkinter.CTkLabel(root, text="00:00:00", text_color="white", bg_color="gray20", font=("calibre", 25, "normal"))
         self.label_text.grid(row=1, column=1, columnspan=3, sticky="nsew")
 
         # The start button
@@ -33,8 +33,12 @@ class Timer:
         # The pause button
         self.pause_button = customtkinter.CTkButton(root, text="Pause", text_color="white", fg_color="black", bg_color="gray20",
         command=self.pause_timer)
-        self.pause_button.grid(row=5, column=2, sticky="nsew")
+        self.pause_button.grid(row=4, column=3, sticky="nsew")
 
+        # The reset button
+        self.reset_button = customtkinter.CTkButton(root, text="Reset Timer", text_color="white", fg_color="black", bg_color="gray20",
+        command=self.reset_timer)
+        self.reset_button.grid(row=4, column=1, sticky="nsew")
 
         # Hours, minutes and seconds
         self.hours_input = customtkinter.CTkEntry(root, font=("calibre", 15, "normal"), bg_color="gray20",
@@ -63,15 +67,13 @@ class Timer:
         root.rowconfigure(1, weight=1)
     
     def countdown_start(self):
-        #self.start_time = time.time()
+
         if self.is_running:
             print(f"Oli, no puedes iniciar otro timer ahorita ya que is_running es: {self.is_running}")
             return
 
         else:
             
-            self.counting_down = True
-            self.is_running = True
             print(f"La variable al activar es: {self.counting_down}")
         
         
@@ -114,7 +116,11 @@ class Timer:
 
             # One second delay when starting
             self.current_seconds += 1
-        
+
+            if self.current_seconds > 1:
+                self.counting_down = True
+                self.is_running = True
+
 
             self.counting_timer()
 
@@ -127,23 +133,24 @@ class Timer:
             self.timer_circle.itemconfig(self.pie_chart, extent=degrees)
             print(f"Ticking down... {self.current_seconds}")
 
+            # The math used to show the timer on the label
             self.timer_label = self.current_seconds
             hours_in_the_float = round(self.timer_label) // 3600
             seconds_without_hours = round(self.timer_label) % 3600
             minutes = seconds_without_hours // 60
             seconds_modulo = seconds_without_hours % 60
 
-            
             self.label_template = f"{hours_in_the_float:02d}:{minutes:02d}:{seconds_modulo:02d}"
             self.label_text.configure(text=self.label_template)
             
             
-
+            # Here's what happens when the timer is finished
             if self.current_seconds == 0:
                 self.current_seconds = 0
                 print("YIPPIEEE")
                 self.timer_circle.itemconfig(self.pie_chart, extent=359.9)
                 self.is_running = False
+
             root.after(1000, self.counting_timer)
 
     def pause_timer(self):
@@ -157,7 +164,10 @@ class Timer:
         self.counting_down = not self.counting_down
         print(self.counting_down)
         self.counting_timer()
-        
+
+    # TO DO: Add functionality to this, something like .after_cancel() or something
+    def reset_timer(self):
+        print("oli toi funcionando pero no hago nada mreow")        
         
         
 timer = Timer()
