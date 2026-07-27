@@ -21,7 +21,7 @@ class Timer:
         
 
         # That little timer on top of the timer
-        self.label_text = customtkinter.CTkLabel(root, text="00:00:00", text_color="white", bg_color="gray20")
+        self.label_text = customtkinter.CTkLabel(root, text="00:00:00", text_color="white", bg_color="gray20", font=("calibre", 20, "normal"))
         self.label_text.grid(row=1, column=1, columnspan=3, sticky="nsew")
 
         # The start button
@@ -104,6 +104,8 @@ class Timer:
         self.total_seconds = (int(hours) * 3600) + (int(minutes) * 60) + int(seconds)
         self.current_seconds = self.total_seconds
 
+        # One second delay when starting
+        self.current_seconds += 1
         
 
         self.counting_timer()
@@ -113,7 +115,7 @@ class Timer:
         
         if self.current_seconds > 0 and self.counting_down == True:
             self.current_seconds -= 1
-            degrees = (self.current_seconds / self.total_seconds) * 360
+            degrees = (self.current_seconds / self.total_seconds) * 359
             self.timer_circle.itemconfig(self.pie_chart, extent=degrees)
             print(f"Ticking down... {self.current_seconds}")
 
@@ -121,9 +123,10 @@ class Timer:
             hours_in_the_float = round(self.timer_label) // 3600
             seconds_without_hours = round(self.timer_label) % 3600
             minutes = seconds_without_hours // 60
+            seconds_modulo = seconds_without_hours % 60
 
             # Find a way to get the seconds, maybe just shoving the seconds variable in here
-            self.label_template = f"{hours_in_the_float:02d}:{minutes:02d}"
+            self.label_template = f"{hours_in_the_float:02d}:{minutes:02d}:{seconds_modulo:02d}"
             self.label_text.configure(text=self.label_template)
             
             
