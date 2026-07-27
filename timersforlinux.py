@@ -14,6 +14,7 @@ class Timer:
     def __init__(self):
         
         self.counting_down = False
+        self.is_running = False
         self.hours_placeholder = "00"
         self.minutes_placeholder = "00"
         self.seconds_placeholder = "00"  
@@ -62,57 +63,64 @@ class Timer:
         root.rowconfigure(1, weight=1)
     
     def countdown_start(self):
-        self.start_time = time.time()
-        self.counting_down = True
-        print(f"La variable al activar es: {self.counting_down}")
-        
-        
-        # This part right here turns the input into the time I desire (for example 15 minutes)
-        self.hours_entry = self.hours_input.get()
-        self.minutes_entry = self.minutes_input.get()
-        self.seconds_entry = self.seconds_input.get()
-        
-        # Remember: Left variable = Right variable
-        # Right variable overwrites the left variable, right variable stays the same. Right assigns to Left
-        if self.hours_entry == "":
-            self.hours_entry = self.hours_placeholder
+        #self.start_time = time.time()
+        if self.is_running:
+            print(f"Oli, no puedes iniciar otro timer ahorita ya que is_running es: {self.is_running}")
+            return
+
         else:
-            self.hours_entry = self.hours_entry
+            
+            self.counting_down = True
+            self.is_running = True
+            print(f"La variable al activar es: {self.counting_down}")
         
         
-        if self.minutes_entry == "":
-            self.minutes_entry = self.minutes_placeholder
-        else:
-            self.minutes_entry = self.minutes_entry
+            # This part right here turns the input into the time I desire (for example 15 minutes)
+            self.hours_entry = self.hours_input.get()
+            self.minutes_entry = self.minutes_input.get()
+            self.seconds_entry = self.seconds_input.get()
+        
+            # Remember: Left variable = Right variable
+            # Right variable overwrites the left variable, right variable stays the same. Right assigns to Left
+            if self.hours_entry == "":
+                self.hours_entry = self.hours_placeholder
+            else:
+                self.hours_entry = self.hours_entry
         
         
-        if self.seconds_entry == "":
-            self.seconds_entry = self.seconds_placeholder
-        else:
-            self.seconds_entry = self.seconds_entry
+            if self.minutes_entry == "":
+                self.minutes_entry = self.minutes_placeholder
+            else:
+                self.minutes_entry = self.minutes_entry
         
-        self.hours_input.set("")
-        self.minutes_input.set("")
-        self.seconds_input.set("")
-        print(f"Timer time test: {self.hours_entry}:{self.minutes_entry}:{self.seconds_entry}")
+        
+            if self.seconds_entry == "":
+                self.seconds_entry = self.seconds_placeholder
+            else:
+                self.seconds_entry = self.seconds_entry
+        
+            self.hours_input.set("")
+            self.minutes_input.set("")
+            self.seconds_input.set("")
+            print(f"Timer time test: {self.hours_entry}:{self.minutes_entry}:{self.seconds_entry}")
     
-        # Math to get the total amount of time with every input
-        hours = self.hours_entry
-        minutes = self.minutes_entry
-        seconds = self.seconds_entry
+            # Math to get the total amount of time with every input
+            hours = self.hours_entry
+            minutes = self.minutes_entry
+            seconds = self.seconds_entry
 
-        self.total_seconds = (int(hours) * 3600) + (int(minutes) * 60) + int(seconds)
-        self.current_seconds = self.total_seconds
+            self.total_seconds = (int(hours) * 3600) + (int(minutes) * 60) + int(seconds)
+            self.current_seconds = self.total_seconds
 
-        # One second delay when starting
-        self.current_seconds += 1
+            # One second delay when starting
+            self.current_seconds += 1
         
 
-        self.counting_timer()
+            self.counting_timer()
 
     
     def counting_timer(self):
-        
+
         if self.current_seconds > 0 and self.counting_down == True:
             self.current_seconds -= 1
             degrees = (self.current_seconds / self.total_seconds) * 359
@@ -125,7 +133,7 @@ class Timer:
             minutes = seconds_without_hours // 60
             seconds_modulo = seconds_without_hours % 60
 
-            # Find a way to get the seconds, maybe just shoving the seconds variable in here
+            
             self.label_template = f"{hours_in_the_float:02d}:{minutes:02d}:{seconds_modulo:02d}"
             self.label_text.configure(text=self.label_template)
             
@@ -135,6 +143,7 @@ class Timer:
                 self.current_seconds = 0
                 print("YIPPIEEE")
                 self.timer_circle.itemconfig(self.pie_chart, extent=359.9)
+                self.is_running = False
             root.after(1000, self.counting_timer)
 
     def pause_timer(self):
