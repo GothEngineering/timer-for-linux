@@ -1,18 +1,21 @@
 import customtkinter
 import tkinter
 import time
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
+import pygame
 
 root = customtkinter.CTk()
 root.title("Timer for Linux")
 # Reminder: X and Y
-root.geometry("420x415") # Im sorry for changing the resolution to fit the tkinter buttons :sob:
+root.geometry("420x415")
 root.config(bg="gray20") # Find a more pretty colour please, this gray looks a little too intense
 # Remember you have to change the background of each label and button to the same colour so it doesn't clash with the real bg
 
 class Timer:
 
     def __init__(self):
-        
+        pygame.mixer.init()
         self.counting_down = False
         self.is_running = False
         self.hours_placeholder = "00"
@@ -127,7 +130,7 @@ class Timer:
     
     def counting_timer(self):
 
-        if self.current_seconds > 0 and self.counting_down == True:
+        if self.current_seconds > 0 and self.counting_down:
             self.current_seconds -= 1
             degrees = (self.current_seconds / self.total_seconds) * 359
             self.timer_circle.itemconfig(self.pie_chart, extent=degrees)
@@ -150,25 +153,44 @@ class Timer:
                 print("YIPPIEEE")
                 self.timer_circle.itemconfig(self.pie_chart, extent=359.9)
                 self.is_running = False
+                self.timer_finished()
+                self.label_text.configure(text="Timer finished")
 
-            root.after(1000, self.counting_timer)
+            self.timer_id = root.after(1000, self.counting_timer)
 
     def pause_timer(self):
 
-        if self.counting_down:
-            self.pause_button.configure(text="Unpause")
-
+        if self.current_seconds == 0:
+            print("*no hace nada en python")
         else:
-            self.pause_button.configure(text="Pause")
 
-        self.counting_down = not self.counting_down
-        print(self.counting_down)
-        self.counting_timer()
+            if self.counting_down:
+                self.pause_button.configure(text="Unpause")
 
-    # TO DO: Add functionality to this, something like .after_cancel() or something
+            else:
+                self.pause_button.configure(text="Pause")
+
+            self.counting_down = not self.counting_down
+            print(self.counting_down)
+            self.counting_timer()
+
+    
     def reset_timer(self):
-        print("oli toi funcionando pero no hago nada mreow")        
+
+        root.after_cancel(self.timer_id)
+        self.current_seconds = 0
+        self.timer_circle.itemconfig(self.pie_chart, extent=359.9)
+        self.total_seconds = 0
+        self.is_running = False
+        self.counting_down = False
+        self.label_text.configure(text="00:00:00")
+        print("mreow timer stopped")
         
-        
+    # The credits are to universfield tyvm
+    def timer_finished(self):
+        alarm_noise = pygame.mixer.Sound("universfield-notification.ogg")
+        alarm_noise.play(loops=3)
+
+
 timer = Timer()
 root.mainloop()
