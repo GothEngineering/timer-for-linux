@@ -32,7 +32,7 @@ class Timer:
         self.current_seconds = 0
         
 
-        # That little timer on top of the timer
+        # That little timer text on top of the timer arc
         self.label_text = customtkinter.CTkLabel(root, text="00:00:00", text_color="white", bg_color=label_color, font=("calibre", 30, "normal"))
         self.label_text.grid(row=2, column=1, columnspan=3, sticky="nsew")
 
@@ -53,7 +53,7 @@ class Timer:
 
         # Hours, minutes and seconds
         self.hours_input = customtkinter.CTkEntry(root, font=("calibre", 15, "normal"), bg_color=background_color,
-        placeholder_text="Hours", placeholder_text_color="gray50", justify="center") # Change the background color here
+        placeholder_text="Hours", placeholder_text_color="gray50", justify="center")
         self.hours_input.grid(row=1, column=1, sticky="ew")
         
         self.minutes_input = customtkinter.CTkEntry(root, font=("calibre", 15, "normal"), bg_color=background_color,
@@ -80,7 +80,6 @@ class Timer:
     def countdown_start(self):
 
         if self.is_running:
-            print(f"Oli, no puedes iniciar otro timer ahorita ya que is_running es: {self.is_running}")
             return
 
         else:
@@ -140,9 +139,11 @@ class Timer:
 
         if self.current_seconds > 0 and self.counting_down:
             self.current_seconds -= 1
+
+            # Arc logic to resize dynamically
             degrees = (self.current_seconds / self.total_seconds) * 359
             self.timer_circle.itemconfig(self.pie_chart, extent=degrees)
-            print(f"Ticking down... {self.current_seconds}")
+            
 
             # The math used to show the timer on the label
             self.timer_label = self.current_seconds
@@ -158,7 +159,6 @@ class Timer:
             # Here's what happens when the timer is finished
             if self.current_seconds == 0:
                 self.current_seconds = 0
-                print("YIPPIEEE")
                 self.timer_circle.itemconfig(self.pie_chart, extent=359.9)
                 self.is_running = False
                 self.timer_finished()
@@ -169,7 +169,7 @@ class Timer:
     def pause_timer(self):
 
         if self.current_seconds == 0:
-            print("*no hace nada en python")
+            return
         else:
 
             if self.counting_down:
@@ -179,7 +179,7 @@ class Timer:
                 self.pause_button.configure(text="Pause")
 
             self.counting_down = not self.counting_down
-            print(self.counting_down)
+            
             self.counting_timer()
 
     
@@ -192,10 +192,11 @@ class Timer:
         self.is_running = False
         self.counting_down = False
         self.label_text.configure(text="00:00:00")
-        print("mreow timer stopped")
+        
         
     # The credits are to universfield tyvm
     def timer_finished(self):
+
         alarm_noise = pygame.mixer.Sound("universfield-notification.ogg")
         alarm_noise.play(loops=3)
 
