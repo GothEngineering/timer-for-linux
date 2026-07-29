@@ -5,12 +5,20 @@ import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
 
+# Timer colors
+background_color = "#212529"
+label_color = "#212529"
+arc_color = "#89b4fa"
+button_color = "#343a40"
+
+
 root = customtkinter.CTk()
 root.title("Timer for Linux")
 # Reminder: X and Y
 root.geometry("420x415")
-root.config(bg="gray20") # Find a more pretty colour please, this gray looks a little too intense
+root.config(bg=background_color)
 # Remember you have to change the background of each label and button to the same colour so it doesn't clash with the real bg
+
 
 class Timer:
 
@@ -25,49 +33,49 @@ class Timer:
         
 
         # That little timer on top of the timer
-        self.label_text = customtkinter.CTkLabel(root, text="00:00:00", text_color="white", bg_color="gray20", font=("calibre", 25, "normal"))
-        self.label_text.grid(row=1, column=1, columnspan=3, sticky="nsew")
+        self.label_text = customtkinter.CTkLabel(root, text="00:00:00", text_color="white", bg_color=label_color, font=("calibre", 30, "normal"))
+        self.label_text.grid(row=2, column=1, columnspan=3, sticky="nsew")
 
         # The start button
-        self.start_button = customtkinter.CTkButton(root, text="Start", text_color="white", fg_color="black", command=self.countdown_start, 
-        bg_color="gray20")
+        self.start_button = customtkinter.CTkButton(root, text="Start", text_color="white", fg_color=button_color, command=self.countdown_start, 
+        bg_color=background_color)
         self.start_button.grid(row=4, column=2, sticky="nsew")
         
         # The pause button
-        self.pause_button = customtkinter.CTkButton(root, text="Pause", text_color="white", fg_color="black", bg_color="gray20",
+        self.pause_button = customtkinter.CTkButton(root, text="Pause", text_color="white", fg_color=button_color, bg_color=background_color,
         command=self.pause_timer)
         self.pause_button.grid(row=4, column=3, sticky="nsew")
 
         # The reset button
-        self.reset_button = customtkinter.CTkButton(root, text="Reset Timer", text_color="white", fg_color="black", bg_color="gray20",
+        self.reset_button = customtkinter.CTkButton(root, text="Reset Timer", text_color="white", fg_color=button_color, bg_color=background_color,
         command=self.reset_timer)
         self.reset_button.grid(row=4, column=1, sticky="nsew")
 
         # Hours, minutes and seconds
-        self.hours_input = customtkinter.CTkEntry(root, font=("calibre", 15, "normal"), bg_color="gray20",
-        placeholder_text="Hours", placeholder_text_color="gray50", justify="center")
-        self.hours_input.grid(row=2, column=1, sticky="ew")
+        self.hours_input = customtkinter.CTkEntry(root, font=("calibre", 15, "normal"), bg_color=background_color,
+        placeholder_text="Hours", placeholder_text_color="gray50", justify="center") # Change the background color here
+        self.hours_input.grid(row=1, column=1, sticky="ew")
         
-        self.minutes_input = customtkinter.CTkEntry(root, font=("calibre", 15, "normal"), bg_color="gray20",
+        self.minutes_input = customtkinter.CTkEntry(root, font=("calibre", 15, "normal"), bg_color=background_color,
         placeholder_text="Minutes", placeholder_text_color="gray50", justify="center")
-        self.minutes_input.grid(row=2, column=2, sticky="nsew")
+        self.minutes_input.grid(row=1, column=2, sticky="nsew")
         
-        self.seconds_input = customtkinter.CTkEntry(root, font=("calibre", 15, "normal"), bg_color="gray20",
+        self.seconds_input = customtkinter.CTkEntry(root, font=("calibre", 15, "normal"), bg_color=background_color,
         placeholder_text="Seconds", placeholder_text_color="gray50", justify="center")
-        self.seconds_input.grid(row=2, column=3, sticky="nsew")
+        self.seconds_input.grid(row=1, column=3, sticky="nsew")
         
         
-        # The canvas creation
-        self.timer_circle = customtkinter.CTkCanvas(root, height=300, width=300, bg="gray30")
-        
+        # The canvas creation, for now it doesn't expand alongside the window
+        self.timer_circle = customtkinter.CTkCanvas(root, height=300, width=300, bg=background_color, highlightbackground=background_color)
+
                                                       #X1, Y1, X2, Y2. That's the coordinates of each number
-        self.pie_chart = self.timer_circle.create_arc(110, 50, 310, 250, start=90, extent=359.9, width=10, outline="red", style="arc")
+        self.pie_chart = self.timer_circle.create_arc(110, 50, 310, 250, start=90, extent=359.9, width=15, outline=arc_color, style="arc")
         self.timer_circle.grid(row=3, column=1, columnspan=3, sticky="nsew")
         # Remember, X1 and Y1 are the starting point of the rectangle, X2 and Y2 are the finish point. Because I wanted the arc to be centered
         # I substracted the first and the latter Y's by half the amount of the width and height (supposedly but it works now atleast)
     
-        root.columnconfigure(1, weight=1)
-        root.rowconfigure(1, weight=1)
+        root.columnconfigure(2, weight=1)
+        root.rowconfigure(2, weight=1)
     
     def countdown_start(self):
 
