@@ -1,7 +1,7 @@
 # Timer for Linux, in Python
 *with Pygame and with CustomTkinter*
 
-I made this timer app because the options I had on Linux weren't as comfortable to use and I got tired of using a web browser pomodoro. I tried to make it similar to the Windows 11 timer app (More updates to come!!)
+I made this timer app because the options I had on Linux weren't as comfortable to use and I got tired of using a pomodoro timer on my web browser. I tried to make it similar to the Windows 11 timer app (More updates to come!!)
 
 ![Timer Test Gif](timertest.gif)
 
