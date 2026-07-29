@@ -2,6 +2,7 @@ import customtkinter
 import tkinter
 import time
 import os
+import sys
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
 
@@ -19,6 +20,13 @@ root.geometry("420x415")
 root.config(bg=background_color)
 # Remember you have to change the background of each label and button to the same colour so it doesn't clash with the real bg
 
+# Find the notification sound when running the executable (or from the terminal)
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 class Timer:
 
@@ -196,8 +204,8 @@ class Timer:
         
     # The credits are to universfield tyvm
     def timer_finished(self):
-
-        alarm_noise = pygame.mixer.Sound("universfield-notification.ogg")
+        notification_file = resource_path("universfield-notification.ogg")
+        alarm_noise = pygame.mixer.Sound(notification_file)
         alarm_noise.play(loops=3)
 
 
