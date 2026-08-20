@@ -5,6 +5,7 @@ import os
 import sys
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
+import datetime
 
 # Timer colors
 background_color = "#212529"
@@ -166,11 +167,16 @@ class Timer:
             
             # Here's what happens when the timer is finished
             if self.current_seconds == 0:
+
+                time_upon_finishing = datetime.datetime.now()
+                # Just 24 hours time for now because I like it
+                organized_time = time_upon_finishing.strftime("%H:%M")
+
                 self.current_seconds = 0
                 self.timer_circle.itemconfig(self.pie_chart, extent=359.9)
                 self.is_running = False
                 self.timer_finished()
-                self.label_text.configure(text="Timer finished")
+                self.label_text.configure(text=f"Timer finished at {organized_time}")
 
             self.timer_id = root.after(1000, self.counting_timer)
 
@@ -206,7 +212,7 @@ class Timer:
     def timer_finished(self):
         notification_file = resource_path("universfield-notification.ogg")
         alarm_noise = pygame.mixer.Sound(notification_file)
-        alarm_noise.play(loops=3)
+        alarm_noise.play(loops=4)
 
 
 timer = Timer()
