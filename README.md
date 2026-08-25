@@ -16,9 +16,10 @@ I made this timer app because the options I had on Linux weren't as comfortable 
 
 2. It's lightweight so you can open various timers at once to count different things
 
+3. It shows the timestamp when the timer finishes so you don't end up wondering if it finished a while ago or just now
+
 
 
 # How to run it
 
-Download the latest release and open it 
-*(Just Linux for now, since it's a timer for Linux, and not windows)*
+Download the latest release for your OS and open it :)
