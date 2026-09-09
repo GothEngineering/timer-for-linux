@@ -7,12 +7,30 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
 import datetime
 
-# Timer colors
+# Timer colors 1 (default)
 background_color = "#212529"
 label_color = "#212529"
 arc_color = "#89b4fa"
 button_color = "#343a40"
 
+# Something with the match thing
+# Timer colors 2
+background_color2 = "#1F82E6"
+label_color2 = "#00366B"
+arc_color2 = "#f5f9ff"
+button_color2 = "#000000"
+
+# Timer colors 3
+background_color3 = "#FA3A21"
+label_color3 = "#E9DCDC"
+arc_color3 = "#55130a"
+button_color3 = "#976B6B"
+
+# Timer colors 4
+background_color4 = "#BB1FB3"
+label_color4 = "#1A1017"
+arc_color4 = "#aa3d61"
+button_color4 = "#097023"
 
 root = customtkinter.CTk()
 root.title("Timer for Linux")
@@ -73,7 +91,15 @@ class Timer:
         placeholder_text="Seconds", placeholder_text_color="gray50", justify="center")
         self.seconds_input.grid(row=1, column=3, sticky="nsew")
         
-        
+        # WIP of a colour change custombox
+        # Just make it print the entry first and foremost
+        self.colour_button = customtkinter.CTkComboBox(root, 
+        values=["Theme 1", "Theme 2", "Theme 3", "Theme 4",], 
+        command=self.changing_colour,
+        )
+        self.colour_button.grid(row=5, column=2)
+
+
         # The canvas creation, for now it doesn't expand alongside the window
         self.timer_circle = customtkinter.CTkCanvas(root, height=300, width=300, bg=background_color, highlightbackground=background_color)
 
@@ -85,7 +111,24 @@ class Timer:
     
         root.columnconfigure(2, weight=1)
         root.rowconfigure(2, weight=1)
+
     
+    def changing_colour(self, choice):
+        if choice == "Theme 1":
+            print("oli te amo")
+
+        elif choice == "Theme 2":
+            print("metelo papi metelo")
+
+        elif choice == "Theme 3":
+            print("hola chat")
+
+        elif choice == "Theme 4":
+            print("me corroooo")
+
+        else:
+            print("mamawevo")
+
     def countdown_start(self):
 
         if self.is_running:
