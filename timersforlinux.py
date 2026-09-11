@@ -12,14 +12,13 @@ color_palette = {
     "label_color": "#212529",
     "arc_color": "#89b4fa",
     "button_color": "#343a40",
+    "color_of_text": "#e2e8f0",
 }
 
 
 root = customtkinter.CTk()
-root.title("Timer for Linux")
-# Reminder: X and Y
+root.title("Timer for Linux v1.2") # Is this name even accurate if it has a Windows version?
 root.geometry("420x415")
-root.config(bg=color_palette["background_color"])
 # Remember you have to change the background of each label and button to the same colour so it doesn't clash with the real bg
 
 # Find the notification sound when running the executable (or from the terminal)
@@ -33,6 +32,7 @@ def resource_path(relative_path):
 class Timer:
 
     def __init__(self):
+        root.config(bg=color_palette["background_color"])
         pygame.mixer.init()
         self.counting_down = False
         self.is_running = False
@@ -43,24 +43,28 @@ class Timer:
         
 
         # That little timer text on top of the timer arc
-        self.label_text = customtkinter.CTkLabel(root, text="00:00:00", text_color="white", 
+        self.label_text = customtkinter.CTkLabel(root, text="00:00:00", 
+        text_color=color_palette["color_of_text"], 
         bg_color=color_palette["label_color"], font=("calibre", 30, "normal"))
         self.label_text.grid(row=2, column=1, columnspan=3, sticky="nsew")
 
         # The start button
-        self.start_button = customtkinter.CTkButton(root, text="Start", text_color="white", 
+        self.start_button = customtkinter.CTkButton(root, text="Start", 
+        text_color=color_palette["color_of_text"], 
         fg_color=color_palette["button_color"], command=self.countdown_start, 
         bg_color=color_palette["background_color"])
         self.start_button.grid(row=4, column=2, sticky="nsew")
         
         # The pause button
-        self.pause_button = customtkinter.CTkButton(root, text="Pause", text_color="white", 
+        self.pause_button = customtkinter.CTkButton(root, text="Pause", 
+        text_color=color_palette["color_of_text"], 
         fg_color=color_palette["button_color"], bg_color=color_palette["background_color"],
         command=self.pause_timer)
         self.pause_button.grid(row=4, column=3, sticky="nsew")
 
         # The reset button
-        self.reset_button = customtkinter.CTkButton(root, text="Reset Timer", text_color="white", 
+        self.reset_button = customtkinter.CTkButton(root, text="Reset Timer", 
+        text_color=color_palette["color_of_text"], 
         fg_color=color_palette["button_color"], bg_color=color_palette["background_color"],
         command=self.reset_timer)
         self.reset_button.grid(row=4, column=1, sticky="nsew")
@@ -82,9 +86,12 @@ class Timer:
         self.seconds_input.grid(row=1, column=3, sticky="nsew")
         
         # WIP of a colour change custombox
+        # TO DO: Find a way to show the theme selected, right now the init function is
+        # overwritting the combobox that says which theme is on right now
         self.colour_button = customtkinter.CTkComboBox(root, 
-        values=["Theme 1", "Theme 2", "Theme 3", "Theme 4",], 
-        command=self.changing_colour,
+        values=["Default", "Purple", "Black", "Amber",], 
+        command=self.changing_colour, bg_color=color_palette["background_color"],
+        
         )
         self.colour_button.grid(row=5, column=2)
 
@@ -106,35 +113,42 @@ class Timer:
     # Sorry
     # Make a check that if the clock is ticking; do NOT change (or prompt)
     def changing_colour(self, choice):
-        if choice == "Theme 1":
+        if self.is_running:
+            return
+
+        if choice == "Default":
             color_palette["background_color"] = "#212529"
             color_palette["label_color"] = "#212529"
             color_palette["arc_color"] = "#89b4fa"
             color_palette["button_color"] = "#343a40"
+            color_palette["color_of_text"] = "#e2e8f0"
             self.__init__()
 
 
-        elif choice == "Theme 2":
-            color_palette["background_color"] = "#1F82E6"
-            color_palette["label_color"] = "#00366B"
-            color_palette["arc_color"] = "#f5f9ff"
-            color_palette["button_color"] = "#000000"
+        elif choice == "Purple":
+            color_palette["background_color"] = "#1E1E1E"
+            color_palette["label_color"] = "#1E1E1E"
+            color_palette["arc_color"] = "#B0B0B0"
+            color_palette["button_color"] = "#3a1c42"
+            color_palette["color_of_text"] = "#f3e8ff"
             self.__init__()
             
 
-        elif choice == "Theme 3":
-            color_palette["background_color"] = "#5D6B79"
-            color_palette["label_color"] = "#5E6368"
-            color_palette["arc_color"] = "#071120"
-            color_palette["button_color"] = "#1FD455"
+        elif choice == "Black":
+            color_palette["background_color"] = "#0a0a0a"
+            color_palette["label_color"] = "#161616"
+            color_palette["arc_color"] = "#8b0000"
+            color_palette["button_color"] = "#161616"
+            color_palette["color_of_text"] = "#e5e7eb"
             self.__init__()
 
 
-        elif choice == "Theme 4":
-            color_palette["background_color"] = "#9EA5AC"
-            color_palette["label_color"] = "#529414"
-            color_palette["arc_color"] = "#e6167e"
-            color_palette["button_color"] = "#332C2C"
+        elif choice == "Amber":
+            color_palette["background_color"] = "#1a1816"
+            color_palette["label_color"] = "#2a2622"
+            color_palette["arc_color"] = "#ffb703"
+            color_palette["button_color"] = "#3d3732"
+            color_palette["color_of_text"] = "#f5f2eb"
             self.__init__()
 
 
