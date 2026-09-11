@@ -17,7 +17,7 @@ color_palette = {
 
 
 root = customtkinter.CTk()
-root.title("Timer for Linux v1.2") # Is this name even accurate if it has a Windows version?
+root.title("Timer for Linux v2.0") # Is this name even accurate if it has a Windows version?
 root.geometry("420x415")
 # Remember you have to change the background of each label and button to the same colour so it doesn't clash with the real bg
 
@@ -110,8 +110,8 @@ class Timer:
         root.columnconfigure(2, weight=1)
         root.rowconfigure(2, weight=1)
 
-    # Sorry
-    # Make a check that if the clock is ticking; do NOT change (or prompt)
+    # To do: add a pop up instead of silently cancelling the function to avoid users from
+    # thinking the app is broken when changing the theme mid countdown
     def changing_colour(self, choice):
         if self.is_running:
             return
@@ -161,8 +161,6 @@ class Timer:
             return
 
         else:
-            
-            print(f"La variable al activar es: {self.counting_down}")
         
         
             # This part right here turns the input into the time I desire (for example 15 minutes)
@@ -192,7 +190,7 @@ class Timer:
             self.hours_input.set("")
             self.minutes_input.set("")
             self.seconds_input.set("")
-            print(f"Timer time test: {self.hours_entry}:{self.minutes_entry}:{self.seconds_entry}")
+            
     
             # Math to get the total amount of time with every input
             hours = self.hours_entry
@@ -238,7 +236,7 @@ class Timer:
             if self.current_seconds == 0:
 
                 time_upon_finishing = datetime.datetime.now()
-                # Just 24 hours time for now because I like it
+                # Just 24 hours time for now because I use it
                 organized_time = time_upon_finishing.strftime("%H:%M")
 
                 self.current_seconds = 0
@@ -279,7 +277,7 @@ class Timer:
         
     # The credits are to universfield tyvm
     def timer_finished(self):
-        notification_file = resource_path("universfield-notification.ogg")
+        notification_file = resource_path("universfield-notif.ogg")
         alarm_noise = pygame.mixer.Sound(notification_file)
         alarm_noise.play(loops=4)
 
