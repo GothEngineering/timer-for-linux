@@ -1,6 +1,4 @@
 import customtkinter
-import tkinter
-import time
 import os
 import sys
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
@@ -84,8 +82,8 @@ class Timer:
         bg_color=color_palette["background_color"],
         placeholder_text="Seconds", placeholder_text_color="gray50", justify="center")
         self.seconds_input.grid(row=1, column=3, sticky="nsew")
+
         
-        # WIP of a colour change custombox
         # TO DO: Find a way to show the theme selected, right now the init function is
         # overwritting the combobox that says which theme is on right now
         self.colour_button = customtkinter.CTkComboBox(root, 
