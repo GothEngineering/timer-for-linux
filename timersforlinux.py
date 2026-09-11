@@ -7,36 +7,19 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import pygame
 import datetime
 
-# Timer colors 1 (default)
-background_color = "#212529"
-label_color = "#212529"
-arc_color = "#89b4fa"
-button_color = "#343a40"
+color_palette = {
+    "background_color": "#212529",
+    "label_color": "#212529",
+    "arc_color": "#89b4fa",
+    "button_color": "#343a40",
+}
 
-# Something with the match thing
-# Timer colors 2
-background_color2 = "#1F82E6"
-label_color2 = "#00366B"
-arc_color2 = "#f5f9ff"
-button_color2 = "#000000"
-
-# Timer colors 3
-background_color3 = "#FA3A21"
-label_color3 = "#E9DCDC"
-arc_color3 = "#55130a"
-button_color3 = "#976B6B"
-
-# Timer colors 4
-background_color4 = "#BB1FB3"
-label_color4 = "#1A1017"
-arc_color4 = "#aa3d61"
-button_color4 = "#097023"
 
 root = customtkinter.CTk()
 root.title("Timer for Linux")
 # Reminder: X and Y
 root.geometry("420x415")
-root.config(bg=background_color)
+root.config(bg=color_palette["background_color"])
 # Remember you have to change the background of each label and button to the same colour so it doesn't clash with the real bg
 
 # Find the notification sound when running the executable (or from the terminal)
@@ -60,39 +43,45 @@ class Timer:
         
 
         # That little timer text on top of the timer arc
-        self.label_text = customtkinter.CTkLabel(root, text="00:00:00", text_color="white", bg_color=label_color, font=("calibre", 30, "normal"))
+        self.label_text = customtkinter.CTkLabel(root, text="00:00:00", text_color="white", 
+        bg_color=color_palette["label_color"], font=("calibre", 30, "normal"))
         self.label_text.grid(row=2, column=1, columnspan=3, sticky="nsew")
 
         # The start button
-        self.start_button = customtkinter.CTkButton(root, text="Start", text_color="white", fg_color=button_color, command=self.countdown_start, 
-        bg_color=background_color)
+        self.start_button = customtkinter.CTkButton(root, text="Start", text_color="white", 
+        fg_color=color_palette["button_color"], command=self.countdown_start, 
+        bg_color=color_palette["background_color"])
         self.start_button.grid(row=4, column=2, sticky="nsew")
         
         # The pause button
-        self.pause_button = customtkinter.CTkButton(root, text="Pause", text_color="white", fg_color=button_color, bg_color=background_color,
+        self.pause_button = customtkinter.CTkButton(root, text="Pause", text_color="white", 
+        fg_color=color_palette["button_color"], bg_color=color_palette["background_color"],
         command=self.pause_timer)
         self.pause_button.grid(row=4, column=3, sticky="nsew")
 
         # The reset button
-        self.reset_button = customtkinter.CTkButton(root, text="Reset Timer", text_color="white", fg_color=button_color, bg_color=background_color,
+        self.reset_button = customtkinter.CTkButton(root, text="Reset Timer", text_color="white", 
+        fg_color=color_palette["button_color"], bg_color=color_palette["background_color"],
         command=self.reset_timer)
         self.reset_button.grid(row=4, column=1, sticky="nsew")
 
         # Hours, minutes and seconds
-        self.hours_input = customtkinter.CTkEntry(root, font=("calibre", 15, "normal"), bg_color=background_color,
+        self.hours_input = customtkinter.CTkEntry(root, font=("calibre", 15, "normal"), 
+        bg_color=color_palette["background_color"],
         placeholder_text="Hours", placeholder_text_color="gray50", justify="center")
         self.hours_input.grid(row=1, column=1, sticky="ew")
         
-        self.minutes_input = customtkinter.CTkEntry(root, font=("calibre", 15, "normal"), bg_color=background_color,
+        self.minutes_input = customtkinter.CTkEntry(root, font=("calibre", 15, "normal"), 
+        bg_color=color_palette["background_color"],
         placeholder_text="Minutes", placeholder_text_color="gray50", justify="center")
         self.minutes_input.grid(row=1, column=2, sticky="nsew")
         
-        self.seconds_input = customtkinter.CTkEntry(root, font=("calibre", 15, "normal"), bg_color=background_color,
+        self.seconds_input = customtkinter.CTkEntry(root, font=("calibre", 15, "normal"), 
+        bg_color=color_palette["background_color"],
         placeholder_text="Seconds", placeholder_text_color="gray50", justify="center")
         self.seconds_input.grid(row=1, column=3, sticky="nsew")
         
         # WIP of a colour change custombox
-        # Just make it print the entry first and foremost
         self.colour_button = customtkinter.CTkComboBox(root, 
         values=["Theme 1", "Theme 2", "Theme 3", "Theme 4",], 
         command=self.changing_colour,
@@ -101,10 +90,12 @@ class Timer:
 
 
         # The canvas creation, for now it doesn't expand alongside the window
-        self.timer_circle = customtkinter.CTkCanvas(root, height=300, width=300, bg=background_color, highlightbackground=background_color)
+        self.timer_circle = customtkinter.CTkCanvas(root, height=300, width=300, 
+        bg=color_palette["background_color"], highlightbackground=color_palette["background_color"])
 
                                                       #X1, Y1, X2, Y2. That's the coordinates of each number
-        self.pie_chart = self.timer_circle.create_arc(110, 50, 310, 250, start=90, extent=359.9, width=15, outline=arc_color, style="arc")
+        self.pie_chart = self.timer_circle.create_arc(110, 50, 310, 250, start=90, extent=359.9, width=15, 
+        outline=color_palette["arc_color"], style="arc")
         self.timer_circle.grid(row=3, column=1, columnspan=3, sticky="nsew")
         # Remember, X1 and Y1 are the starting point of the rectangle, X2 and Y2 are the finish point. Because I wanted the arc to be centered
         # I substracted the first and the latter Y's by half the amount of the width and height (supposedly but it works now atleast)
@@ -112,22 +103,43 @@ class Timer:
         root.columnconfigure(2, weight=1)
         root.rowconfigure(2, weight=1)
 
-    
+    # Sorry
+    # Make a check that if the clock is ticking; do NOT change (or prompt)
     def changing_colour(self, choice):
         if choice == "Theme 1":
-            print("oli te amo")
+            color_palette["background_color"] = "#212529"
+            color_palette["label_color"] = "#212529"
+            color_palette["arc_color"] = "#89b4fa"
+            color_palette["button_color"] = "#343a40"
+            self.__init__()
+
 
         elif choice == "Theme 2":
-            print("metelo papi metelo")
+            color_palette["background_color"] = "#1F82E6"
+            color_palette["label_color"] = "#00366B"
+            color_palette["arc_color"] = "#f5f9ff"
+            color_palette["button_color"] = "#000000"
+            self.__init__()
+            
 
         elif choice == "Theme 3":
-            print("hola chat")
+            color_palette["background_color"] = "#5D6B79"
+            color_palette["label_color"] = "#5E6368"
+            color_palette["arc_color"] = "#071120"
+            color_palette["button_color"] = "#1FD455"
+            self.__init__()
+
 
         elif choice == "Theme 4":
-            print("me corroooo")
+            color_palette["background_color"] = "#9EA5AC"
+            color_palette["label_color"] = "#529414"
+            color_palette["arc_color"] = "#e6167e"
+            color_palette["button_color"] = "#332C2C"
+            self.__init__()
+
 
         else:
-            print("mamawevo")
+            print("Error D:")
 
     def countdown_start(self):
 
