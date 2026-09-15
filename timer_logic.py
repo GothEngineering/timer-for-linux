@@ -1,7 +1,7 @@
-import main
 import datetime
 
 class TimerLogic:
+
     def countdown_start(self):
         self.counting_down = False
         is_running = False
@@ -17,9 +17,9 @@ class TimerLogic:
         
         
         # This part right here turns the input into the time I desire (for example 15 minutes)
-            hours_entry = hours_input.get()
-            minutes_entry = minutes_input.get()
-            seconds_entry = seconds_input.get()
+            hours_entry = self.hours_input.get()
+            minutes_entry = self.minutes_input.get()
+            seconds_entry = self.seconds_input.get()
         
         # Remember: Left variable = Right variable
         # Right variable overwrites the left variable, right variable stays the same. Right assigns to Left
@@ -40,9 +40,9 @@ class TimerLogic:
             else:
                 seconds_entry = seconds_entry
         
-            hours_input.set("")
-            minutes_input.set("")
-            seconds_input.set("")
+            self.hours_input.set("")
+            self.minutes_input.set("")
+            self.seconds_input.set("")
             
     
         # Math to get the total amount of time with every input
@@ -98,4 +98,33 @@ class TimerLogic:
                 self.timer_finished()
                 self.label_text.configure(text=f"Timer finished at {organized_time}")
 
-            self.timer_id = main.root.after(1000, self.counting_timer)
+            # figuring this out gimme a sec
+            self.timer_id = self.root.after(1000, self.counting_timer)
+
+
+    def pause_timer(self):
+
+        if self.current_seconds == 0:
+            return
+        else:
+
+            if self.counting_down:
+                self.pause_button.configure(text="Unpause")
+
+            else:
+                self.pause_button.configure(text="Pause")
+
+            self.counting_down = not self.counting_down
+            
+            self.counting_timer()
+
+    
+    def reset_timer(self):
+
+        self.root.after_cancel(self.timer_id)
+        self.current_seconds = 0
+        self.timer_circle.itemconfig(self.pie_chart, extent=359.9)
+        self.total_seconds = 0
+        self.is_running = False
+        self.counting_down = False
+        self.label_text.configure(text="00:00:00")
