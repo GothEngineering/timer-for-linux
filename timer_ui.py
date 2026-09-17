@@ -1,6 +1,9 @@
 import customtkinter
 import pygame
 import timer_logic
+from datetime import datetime
+from os import path
+import sys
 
 
 color_palette = {
@@ -12,11 +15,23 @@ color_palette = {
 }
 
 
+# Find the notification sound when running the executable (or from the terminal)
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = path.abspath(".")
+    return path.join(base_path, relative_path)
+
+
 class TimerUI:
 
     # in theory this should fix the 2 arguments error
     def __init__(self, root):
         self.root = root
+        self.counting_down = False
+        self.is_running = False
+
 
         self.root.config(bg=color_palette["background_color"])
         pygame.mixer.init()
@@ -32,7 +47,7 @@ class TimerUI:
         # The start button
         self.start_button = customtkinter.CTkButton(self.root, text="Start", 
         text_color=color_palette["color_of_text"], 
-        fg_color=color_palette["button_color"], command=self.logic.countdown_start, 
+        fg_color=color_palette["button_color"], command=self.data_to_logic, 
         bg_color=color_palette["background_color"])
         self.start_button.grid(row=4, column=2, sticky="nsew")
         
@@ -40,14 +55,14 @@ class TimerUI:
         self.pause_button = customtkinter.CTkButton(self.root, text="Pause", 
         text_color=color_palette["color_of_text"], 
         fg_color=color_palette["button_color"], bg_color=color_palette["background_color"],
-        command=self.logic.pause_timer)
+        command=self.pause_timer)
         self.pause_button.grid(row=4, column=3, sticky="nsew")
 
         # The reset button
         self.reset_button = customtkinter.CTkButton(self.root, text="Reset Timer", 
         text_color=color_palette["color_of_text"], 
         fg_color=color_palette["button_color"], bg_color=color_palette["background_color"],
-        command=self.logic.reset_timer)
+        command=self.reset_timer)
         self.reset_button.grid(row=4, column=1, sticky="nsew")
 
         # Hours, minutes and seconds
@@ -91,8 +106,48 @@ class TimerUI:
         self.root.columnconfigure(2, weight=1)
         self.root.rowconfigure(2, weight=1)
 
-    
+    # RUn this function when pressing start, send the data with the .get() thing
+    # and receive it on timer logic with the same paramethers you sent, you got this bro
+    def data_to_logic(self):
+        h_empty = "00"
+        m_empty = "00"
+        s_empty = "00" 
 
+        h = self.hours_input.get()
+        m = self.minutes_input.get()
+        s = self.seconds_input.get()
+
+        # oh god this is even more confusing than before, sorry reader
+        if h == "":
+            h = h_empty
+        else:
+            h = h
+
+        if m == "":
+            m = m_empty
+        else:
+            m = m
+
+        if s == "":
+            s = s_empty
+        else:
+            s = s
+
+
+        finished_math = self.logic.countdown_start(h = 0, m = 0, s = 0)
+
+        self.hours_input.set("")
+        self.minutes_input.set("")
+        self.seconds_input.set("")
+
+        if finished_math == 0:
+            print("pendejo")
+        else:
+            self.counting_timer(finished_math)
+        print("oli se activo esta mamadota q pro")
+
+
+    
     # To do: add a pop up instead of silently cancelling the function to avoid users from
     # thinking the app is broken when changing the theme mid countdown.
     # Also change __init__ to .configure() to avoid making a shitton of copies (or smth)
@@ -138,3 +193,78 @@ class TimerUI:
 
         else:
             print("Error D:")
+
+    def counting_timer(self, current_seconds):
+        self.total_seconds = current_seconds
+        self.time_left = current_seconds
+        self.counting_down = True
+        self.is_running = True 
+
+        if self.time_left > 0 and self.counting_down:
+            self.time_left -= 1
+
+            # Arc logic to resize dynamically
+            degrees = (self.time_left / self.total_seconds) * 359
+            self.timer_circle.itemconfig(self.pie_chart, extent=degrees)
+            
+
+            # The math used to show the timer on the label
+            self.timer_label = self.time_left
+            hours_in_the_float = round(self.timer_label) // 3600
+            seconds_without_hours = round(self.timer_label) % 3600
+            minutes = seconds_without_hours // 60
+            seconds_modulo = seconds_without_hours % 60
+
+            self.label_template = f"{hours_in_the_float:02d}:{minutes:02d}:{seconds_modulo:02d}"
+            self.label_text.configure(text=self.label_template)
+            
+            
+            # Here's what happens when the timer is finished
+            if self.time_left == 0:
+
+                time_upon_finishing = datetime.now()
+                # Just 24 hours time for now because I use it
+                organized_time = time_upon_finishing.strftime("%H:%M")
+
+                self.time_left = 0
+                self.timer_circle.itemconfig(self.pie_chart, extent=359.9)
+                self.is_running = False
+                self.timer_finished()
+                self.label_text.configure(text=f"Timer finished at {organized_time}")
+
+            # figuring this out gimme a sec
+            self.timer_id = self.root.after(1000, self.counting_timer)
+
+
+    def pause_timer(self):
+
+        if self.time_left == 0:
+            return
+        else:
+
+            if self.counting_down:
+                self.pause_button.configure(text="Unpause")
+
+            else:
+                self.pause_button.configure(text="Pause")
+
+            self.counting_down = not self.counting_down
+            
+            self.counting_timer()
+
+    
+    def reset_timer(self):
+
+        self.root.after_cancel(self.timer_id)
+        self.time_left = 0
+        self.timer_circle.itemconfig(self.pie_chart, extent=359.9)
+        self.total_seconds = 0
+        self.is_running = False
+        self.counting_down = False
+        self.label_text.configure(text="00:00:00")
+
+    # The credits are to universfield tyvm
+    def timer_finished(self):
+        notification_file = resource_path("universfield-notif.ogg")
+        alarm_noise = pygame.mixer.Sound(notification_file)
+        alarm_noise.play(loops=4)
