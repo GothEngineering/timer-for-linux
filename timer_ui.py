@@ -1,9 +1,10 @@
 import customtkinter
-import pygame
 import timer_logic
 from datetime import datetime
-from os import path
+from os import path, environ
 import sys
+environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
+import pygame
 
 
 color_palette = {
@@ -31,7 +32,8 @@ class TimerUI:
         self.root = root
         self.counting_down = False
         self.is_running = False
-
+        self.total_seconds = 0
+        self.time_left = 0
 
         self.root.config(bg=color_palette["background_color"])
         pygame.mixer.init()
@@ -106,8 +108,7 @@ class TimerUI:
         self.root.columnconfigure(2, weight=1)
         self.root.rowconfigure(2, weight=1)
 
-    # RUn this function when pressing start, send the data with the .get() thing
-    # and receive it on timer logic with the same paramethers you sent, you got this bro
+    # Grab the entry boxes data and send them to the logic module
     def data_to_logic(self):
         h_empty = "00"
         m_empty = "00"
@@ -134,17 +135,21 @@ class TimerUI:
             s = s
 
 
-        finished_math = self.logic.countdown_start(h = 0, m = 0, s = 0)
+        finished_math = self.logic.countdown_start(h, m, s)
 
         self.hours_input.set("")
         self.minutes_input.set("")
         self.seconds_input.set("")
 
         if finished_math == 0:
-            print("pendejo")
-        else:
-            self.counting_timer(finished_math)
-        print("oli se activo esta mamadota q pro")
+            return
+        else: 
+            self.counting_down = True
+            self.is_running = True 
+            self.total_seconds = finished_math
+            self.time_left = finished_math
+            self.counting_timer()
+
 
 
     
@@ -194,11 +199,8 @@ class TimerUI:
         else:
             print("Error D:")
 
-    def counting_timer(self, current_seconds):
-        self.total_seconds = current_seconds
-        self.time_left = current_seconds
-        self.counting_down = True
-        self.is_running = True 
+    def counting_timer(self):
+
 
         if self.time_left > 0 and self.counting_down:
             self.time_left -= 1
@@ -229,10 +231,11 @@ class TimerUI:
                 self.time_left = 0
                 self.timer_circle.itemconfig(self.pie_chart, extent=359.9)
                 self.is_running = False
+                self.counting_down = False
                 self.timer_finished()
                 self.label_text.configure(text=f"Timer finished at {organized_time}")
 
-            # figuring this out gimme a sec
+
             self.timer_id = self.root.after(1000, self.counting_timer)
 
 
