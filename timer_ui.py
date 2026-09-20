@@ -183,9 +183,7 @@ class TimerUI:
     # To do: add a pop up instead of silently cancelling the function to avoid users from
     # thinking the app is broken when changing the theme mid countdown.
     def changing_colour(self, choice):
-        if self.is_running:
-            return
-
+        
         if choice == "Default":
             color_palette["background_color"] = "#212529"
             color_palette["label_color"] = "#212529"
