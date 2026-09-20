@@ -22,4 +22,4 @@ I made this timer app because the options I had on Linux weren't as comfortable 
 
 # How to run it
 
-Download the latest release for your OS and open it :)
+Download the latest release for your OS and open it or run the main.py file :)

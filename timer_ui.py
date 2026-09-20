@@ -4,7 +4,7 @@ from datetime import datetime
 from os import path, environ
 import sys
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
-import pygame
+from pygame import mixer
 
 
 color_palette = {
@@ -27,7 +27,6 @@ def resource_path(relative_path):
 
 class TimerUI:
 
-    # in theory this should fix the 2 arguments error
     def __init__(self, root):
         self.root = root
         self.counting_down = False
@@ -36,20 +35,23 @@ class TimerUI:
         self.time_left = 0
 
         self.root.config(bg=color_palette["background_color"])
-        pygame.mixer.init()
+        mixer.init()
 
         self.logic = timer_logic.TimerLogic()
 
         # That little timer text on top of the timer arc
+        # Changed the label color to the background color, idk why it wasn't the same
+        # on the Default and Purple themes...
         self.label_text = customtkinter.CTkLabel(self.root, text="00:00:00", 
         text_color=color_palette["color_of_text"], 
-        bg_color=color_palette["label_color"], font=("calibre", 30, "normal"))
+        bg_color=color_palette["background_color"], font=("calibre", 30, "normal"),
+        fg_color=color_palette["button_color"])
         self.label_text.grid(row=2, column=1, columnspan=3, sticky="nsew")
 
         # The start button
         self.start_button = customtkinter.CTkButton(self.root, text="Start", 
         text_color=color_palette["color_of_text"], 
-        fg_color=color_palette["button_color"], command=self.data_to_logic, 
+        fg_color=color_palette["button_color"], command=self.start_function, 
         bg_color=color_palette["background_color"])
         self.start_button.grid(row=4, column=2, sticky="nsew")
         
@@ -84,8 +86,6 @@ class TimerUI:
         self.seconds_input.grid(row=1, column=3, sticky="nsew")
 
         
-        # TO DO: Find a way to show the theme selected, right now the init function is
-        # overwritting the combobox that says which theme is on right now
         self.colour_button = customtkinter.CTkComboBox(self.root, 
         values=["Default", "Purple", "Black", "Amber",], 
         command=self.changing_colour, bg_color=color_palette["background_color"],
@@ -105,11 +105,20 @@ class TimerUI:
         # Remember, X1 and Y1 are the starting point of the rectangle, X2 and Y2 are the finish point. Because I wanted the arc to be centered
         # I substracted the first and the latter Y's by half the amount of the width and height (supposedly but it works now atleast)
     
+        # List containing the tkinter buttons to update them with a for loop
+        self.buttons_only = [
+            self.start_button, self.pause_button, self.reset_button, self.label_text
+        ]
+        self.entries_only = [
+            self.hours_input, self.minutes_input, self.seconds_input,
+        ]
+        
+
         self.root.columnconfigure(2, weight=1)
         self.root.rowconfigure(2, weight=1)
 
     # Grab the entry boxes data and send them to the logic module
-    def data_to_logic(self):
+    def start_function(self):
         h_empty = "00"
         m_empty = "00"
         s_empty = "00" 
@@ -119,6 +128,8 @@ class TimerUI:
         s = self.seconds_input.get()
 
         # oh god this is even more confusing than before, sorry reader
+        # This block simply checks if it received something from the entries
+        # and if not, replaces it with 00
         if h == "":
             h = h_empty
         else:
@@ -150,12 +161,27 @@ class TimerUI:
             self.time_left = finished_math
             self.counting_timer()
 
+    # future me: make this more efficient down the line
+    def looping_colours(self, buttons, entries):
+        self.root.config(bg=color_palette["background_color"])
+        self.timer_circle.config(bg=color_palette["background_color"], 
+                                highlightbackground=color_palette["background_color"])
+        self.timer_circle.itemconfig(self.pie_chart, outline=color_palette["arc_color"]) # wtf
+        self.colour_button.configure(bg_color=color_palette["background_color"])
+
+        for button in buttons:
+            button.configure(bg_color=color_palette["background_color"],
+                             fg_color=color_palette["button_color"],
+                             text_color=color_palette["color_of_text"])
+
+        for entry in entries:
+            entry.configure(bg_color=color_palette["background_color"],
+                            fg_color=color_palette["color_of_text"]
+                            )
 
 
-    
     # To do: add a pop up instead of silently cancelling the function to avoid users from
     # thinking the app is broken when changing the theme mid countdown.
-    # Also change __init__ to .configure() to avoid making a shitton of copies (or smth)
     def changing_colour(self, choice):
         if self.is_running:
             return
@@ -166,7 +192,7 @@ class TimerUI:
             color_palette["arc_color"] = "#89b4fa"
             color_palette["button_color"] = "#343a40"
             color_palette["color_of_text"] = "#e2e8f0"
-            self.__init__()
+            self.looping_colours(self.buttons_only, self.entries_only)
 
 
         elif choice == "Purple":
@@ -175,7 +201,7 @@ class TimerUI:
             color_palette["arc_color"] = "#B0B0B0"
             color_palette["button_color"] = "#3a1c42"
             color_palette["color_of_text"] = "#f3e8ff"
-            self.__init__()
+            self.looping_colours(self.buttons_only, self.entries_only)
             
 
         elif choice == "Black":
@@ -184,7 +210,7 @@ class TimerUI:
             color_palette["arc_color"] = "#8b0000"
             color_palette["button_color"] = "#161616"
             color_palette["color_of_text"] = "#e5e7eb"
-            self.__init__()
+            self.looping_colours(self.buttons_only, self.entries_only)
 
 
         elif choice == "Amber":
@@ -193,12 +219,13 @@ class TimerUI:
             color_palette["arc_color"] = "#ffb703"
             color_palette["button_color"] = "#3d3732"
             color_palette["color_of_text"] = "#f5f2eb"
-            self.__init__()
+            self.looping_colours(self.buttons_only, self.entries_only)
 
 
         else:
             print("Error D:")
 
+    
     def counting_timer(self):
 
 
@@ -225,7 +252,7 @@ class TimerUI:
             if self.time_left == 0:
 
                 time_upon_finishing = datetime.now()
-                # Just 24 hours time for now because I use it
+                # Just 24 hours time for now because I prefer it
                 organized_time = time_upon_finishing.strftime("%H:%M")
 
                 self.time_left = 0
@@ -267,7 +294,8 @@ class TimerUI:
         self.label_text.configure(text="00:00:00")
 
     # The credits are to universfield tyvm
+    # TO DO: make the notification sound constantly until stopped
     def timer_finished(self):
         notification_file = resource_path("universfield-notif.ogg")
-        alarm_noise = pygame.mixer.Sound(notification_file)
+        alarm_noise = mixer.Sound(notification_file)
         alarm_noise.play(loops=4)
