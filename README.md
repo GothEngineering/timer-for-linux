@@ -22,4 +22,20 @@ I made this timer app because the options I had on Linux weren't as comfortable 
 
 # How to run it
 
-Download the latest release for your OS and open it or run the main.py file :)
+## From the executable:
+Download the latest release for your OS and open it :)
+
+## From the terminal:
+1. Activate your virtual environment 
+
+2. Download the requirements from the text file and install the dependencies with pip:
+```
+pip install -r requirements.txt
+```
+
+3. Then, you run the script: 
+
+```
+python3 main.py
+```
+I prefer the executable for ease of use, but if something doesn't work on the terminal please let me know
